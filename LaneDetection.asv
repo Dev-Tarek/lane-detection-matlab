@@ -1,0 +1,12 @@
+function [ ] = LaneDetection( video )
+    while hasFrame(video)
+    grayImage = PrepareImage(image);
+    maskedImage = MaskImage(grayImage);
+    blurImage = BlurImage(maskedImage, 4);
+    edgesImage = DetectEdges(blurImage);
+
+    imshow(image), hold on;
+    detectedLines = DetectLines(edgesImage);
+    DrawLines(detectedLines);
+end
+
