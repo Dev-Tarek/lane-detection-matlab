@@ -2,11 +2,11 @@ function [ lines ] = DetectLines( img )
 
     [H, theta, rho] = hough(img);
     
-    threshold = 10;
+    threshold = 20;
     peaks  = houghpeaks(H, threshold, 'threshold', threshold);
 
-    maxLineGap = 180;
-    minLineLen = 150;
+    maxLineGap = 190;
+    minLineLen = 120;
     
     lines = houghlines( ...
             img, ...
