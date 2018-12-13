@@ -1,19 +1,19 @@
-function [ ] = LaneDetection( video )
-    initFrame = readFrame(video);
-    display = imshow(initFrame);
-    while hasFrame(video)
-        image = readFrame(video);
-        grayImage = PrepareImage(image);
-        maskedImage = MaskImage(grayImage);
-        blurImage = BlurImage(maskedImage, 4);
-        edgesImage = DetectEdges(blurImage);
-        roiImage = ROIMask(edgesImage);
-        
-        imshow(image), hold;
-        
-        detectedLines = DetectLines(roiImage);
-        DrawLines(detectedLines), hold;
-        drawnow;
+function [ result ] = LaneDetection( frame )
+
+    grayImage = PrepareImage(frame);
+    maskedImage = MaskImage(grayImage);
+    blurImage = BlurImage(maskedImage, 4);
+    edgesImage = DetectEdges(blurImage);
+    roiImage = ROIMask(edgesImage);
+    detectedLines = DetectLines(roiImage);
+    [leftLines, rightLines] = SplitLinesBySlope(detectedLines);
+    leftLines = SortLines(leftLines);
+    rightLines = SortLines(rightLines);
+    try
+        result = DrawLines2(frame, rightLines(1:2));
+    catch
+        result = DrawLines2(frame, rightLines);
     end
+    
 end
 
