@@ -8,6 +8,14 @@ function [ leftLines, rightLines ] = SplitLinesBySlope( lines )
         elseif (slope > 0.4)
             rightLines = [rightLines lines(k)];
         end
+        
+        
+        %lines(k).theta
+        %if (lines(k).theta < -10 && lines(k).theta > -60)
+        %    rightLines = [rightLines lines(k)];
+        %elseif (lines(k).theta > 10 && lines(k).theta < 60)
+        %    leftLines = [leftLines lines(k)];
+        %end
     end
 end
 

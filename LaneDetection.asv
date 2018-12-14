@@ -17,23 +17,16 @@ function [ frame ] = LaneDetection( frame )
     rightLineEquation = FindLineEquation(rightLine);
     leftLineEquation = FindLineEquation(leftLine);
     
-    rightLane = ConstructLineFromParameters(rightLineEquation);
-    leftLane = ConstructLineFromParameters(leftLineEquation);
+    rightLine1 = ConstructLineFromParameters(rightLineEquation);
+    leftLine1 = ConstructLineFromParameters(leftLineEquation);
     
-    frame = DrawLines3(frame, leftLane);
-    frame = DrawLines3(frame, rightLane);
+    frame = DrawLines3(frame, rightLine1);
+    frame = DrawLines3(frame, leftLine1);
     
-    [angle,r] = LaneAngle(rightLane,leftLane);
+    [angle,r] = LaneAngle(rightLine1,leftLine1);
     
-    [r,c,d] = size(frame);
-    offset = CarPositionOffset(rightLane,leftLane,c);
+    CarPositionOffset()
     
-    
-    frame = Draw4(frame,offset,r,c);
-    frame = insertShape(frame, 'Circle', [(rightLane.point1(1)+leftLane.point1(1))/2 r-10 1], 'LineWidth', 2, 'Color', 'blue');
-
-    %frame = insertShape(frame, 'Line', [c/2 0 c/2 720], 'LineWidth', 2, 'Color', 'blue');
-
     %frame = DrawLines2(frame, rightLine);
     %frame = DrawLines2(frame, leftLine);
   
