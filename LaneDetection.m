@@ -13,12 +13,21 @@ function [ frame ] = LaneDetection( frame )
     
     rightLine = AverageLines(rightLines,30);
     leftLine = AverageLines(leftLines,30);
+    alpha=.2;
+    persistent rightLaneOld
+    persistent leftLaneOld
     
     rightLineEquation = FindLineEquation(rightLine);
     leftLineEquation = FindLineEquation(leftLine);
+    if isempty(rightLaneOld) && isempty(leftLaneOld)
+        rightLaneOld=rightLineEquation;
+        leftLaneOld=leftLineEquation;
+    end
+    rightLaneOld= alpha.*rightLaneOld+(1-alpha).*rightLineEquation;
+    leftLaneOld=  alpha.*leftLaneOld+(1-alpha).*leftLineEquation;
     
-    rightLane = ConstructLineFromParameters(rightLineEquation);
-    leftLane = ConstructLineFromParameters(leftLineEquation);
+    rightLane = ConstructLineFromParameters(rightLaneOld);
+    leftLane = ConstructLineFromParameters(leftLaneOld);
     
     frame = DrawLines3(frame, leftLane);
     frame = DrawLines3(frame, rightLane);
