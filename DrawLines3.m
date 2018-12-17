@@ -1,4 +1,5 @@
 function [ frame ] = DrawLines3( frame, line )
+    
     x1 = line.point1(1);
     y1 = line.point1(2);
     x2 = line.point2(1);

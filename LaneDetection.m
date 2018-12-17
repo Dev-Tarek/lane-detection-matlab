@@ -1,5 +1,5 @@
 function [ frame ] = LaneDetection( frame )
-
+    
     grayImage = PrepareImage(frame);
     maskedImage = MaskImage(grayImage);
     blurImage = BlurImage(maskedImage, 4);
@@ -17,15 +17,19 @@ function [ frame ] = LaneDetection( frame )
     rightLineEquation = FindLineEquation(rightLine);
     leftLineEquation = FindLineEquation(leftLine);
     
-    [rightLineEquation,leftLineEquation]=WeightedAverage(rightLineEquation,leftLineEquation,.8);
+    [rightLineEquation, leftLineEquation] = WeightedAverage(rightLineEquation, leftLineEquation, .8);
     
     rightLane = ConstructLineFromParameters(rightLineEquation);
     leftLane = ConstructLineFromParameters(leftLineEquation);
     
+    if ~isstruct(rightLane) || ~isstruct(leftLane)
+        return;
+    end
+    
     frame = DrawLines3(frame, leftLane);
     frame = DrawLines3(frame, rightLane);
-    
-    [angle,r] = LaneAngle(rightLane,leftLane);
+
+    [angle, r] = LaneAngle(rightLane,leftLane);
     
     [r,c,d] = size(frame);
     offset = CarPositionOffset(rightLane,leftLane,c);

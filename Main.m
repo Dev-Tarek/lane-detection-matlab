@@ -4,7 +4,6 @@
 %image = imread(imagePath);
 
 videoPath = 'test_videos/challenge.mp4';
-video = VideoReader(videoPath);
 
 videoSource = vision.VideoFileReader(videoPath);
 depVideoPlayer = vision.DeployableVideoPlayer();
