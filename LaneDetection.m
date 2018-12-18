@@ -1,5 +1,12 @@
 function [ frame ] = LaneDetection( frame )
     
+    actual_image = frame;
+    
+    % Variables to save previous lines.
+    persistent rightLaneOld;
+    persistent leftLaneOld;
+    
+    % Processing image to get all lines in ROI.
     grayImage = PrepareImage(frame);
     maskedImage = MaskImage(grayImage);
     blurImage = BlurImage(maskedImage, 4);
@@ -8,41 +15,47 @@ function [ frame ] = LaneDetection( frame )
     detectedLines = DetectLines(roiImage);
     
     [leftLines, rightLines] = SplitLinesBySlope(detectedLines);
+    
+    % Drawing previous line if no lines were detected in current frame.
+    if ~length(leftLines) || ~length(rightLines)
+        if isempty(leftLaneOld) || isempty(rightLaneOld)
+            return;
+        end
+        frame = DrawLine(frame, ConstructLineFromParameters(leftLaneOld));
+        frame = DrawLine(frame, ConstructLineFromParameters(rightLaneOld));
+        return;
+    end
+
+    % Sort lines by closest to bottom of camera.
     leftLines = SortLines(leftLines);
     rightLines = SortLines(rightLines);
     
-    rightLine = AverageLines(rightLines,30);
-    leftLine = AverageLines(leftLines,30);
+    % Average nearest 2 lines to the bottom of the image
+    rightLine = AverageLines(rightLines, 2);
+    leftLine = AverageLines(leftLines, 2);
     
+    % Get the equations of the resulting lines
     rightLineEquation = FindLineEquation(rightLine);
     leftLineEquation = FindLineEquation(leftLine);
     
-    [rightLineEquation, leftLineEquation] = WeightedAverage(rightLineEquation, leftLineEquation, .8);
+    [rightLineEquation, leftLineEquation ] = ...
+       WeightedAverage(rightLineEquation, leftLineEquation, leftLaneOld, rightLaneOld, .8);
     
+    % Update last lines
+    leftLaneOld = leftLineEquation;
+    rightLaneOld = rightLineEquation;
+    
+    % Get lines as structs from the weighted averaged lines
     rightLane = ConstructLineFromParameters(rightLineEquation);
     leftLane = ConstructLineFromParameters(leftLineEquation);
     
-    if ~isstruct(rightLane) || ~isstruct(leftLane)
-        return;
-    end
+    frame = DrawLine(frame, leftLane);
+    frame = DrawLine(frame, rightLane);
     
-    frame = DrawLines3(frame, leftLane);
-    frame = DrawLines3(frame, rightLane);
-
-    [angle, r] = LaneAngle(rightLane,leftLane);
-    
-    [r,c,d] = size(frame);
+    [r, c, d] = size(frame);
     offset = CarPositionOffset(rightLane,leftLane,c);
     
-    
-    frame = Draw4(frame,offset,r,c);
-    frame = insertShape(frame, 'Circle', [(rightLane.point1(1)+leftLane.point1(1))/2 r-10 1], 'LineWidth', 2, 'Color', 'blue');
+    frame = DrawDirection(frame, offset, r, c);
+    frame = insertShape(frame, 'Circle', [(rightLane.point1(1)+leftLane.point1(1))/2 r-10 1], 'LineWidth', 2, 'Color', 'green');
 
-    %frame = insertShape(frame, 'Line', [c/2 0 c/2 720], 'LineWidth', 2, 'Color', 'blue');
-
-    %frame = DrawLines2(frame, rightLine);
-    %frame = DrawLines2(frame, leftLine);
-  
-    
 end
-
