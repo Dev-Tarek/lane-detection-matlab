@@ -1,5 +1,3 @@
-%%
-clc, clear, clear all, clear variable
 
 %%
 figure, imshow(actual_image), hold, DrawLines(detectedLines)

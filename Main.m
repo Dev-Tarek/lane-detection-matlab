@@ -1,7 +1,12 @@
-%% PROJECT CODE
+%% TEAM MEMBERS:
+% Abdelrahman Hamdy Metwally
+% Abdelrahman Tarek Abdelhamid
+% Ahmed Elsaid Bally
+% Mona Mardy Elaraby
+% Yasmin Ahmed Barakat
+%% SUPERVISION: DR. MAHMOUD ALSHWEIMY
 
-%imagePath = 'test_images/lane.jpeg';
-%image = imread(imagePath);
+%% MAIN SCRIPT - START HERE
 
 videoPath = 'test_videos/challenge.mp4';
 
@@ -16,4 +21,3 @@ end
 
 release(depVideoPlayer);
 release(videoSource);
-
